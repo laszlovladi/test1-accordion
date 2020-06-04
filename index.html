@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test 1</title>
+  <style>
+    .container{
+      width: 500px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="container">
+  </div>
+
+<script>
+    const arr = [
+      [
+        "First",
+        "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Officiis obcaecati voluptatem beatae hic deleniti officia, modi soluta adipisci totam veniam accusamus recusandae deserunt facilis dolorum consequuntur molestiae aperiam laborum reprehenderit."
+      ],
+      [
+        "Second",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum earum architecto voluptatum inventore itaque ducimus suscipit eos adipisci ratione sint reprehenderit doloribus unde, veniam ex atque officiis, velit quidem eligendi."
+      ],
+      [
+        "Third",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Pariatur totam nobis, ex, eligendi quod velit nisi distinctio dolorum, voluptates blanditiis non sunt. Ad eius aspernatur porro officia sit illo quia."
+      ],
+      [
+        "Fourth",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem placeat esse veniam eum nisi ipsam expedita a minima? Iusto animi odit ab at cumque nesciunt commodi assumenda atque ad dicta!"
+      ],
+      [
+        "Fifth",
+        "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vel, laborum minus modi adipisci sed magnam a esse quos rem recusandae itaque praesentium ratione aspernatur, non vitae voluptatum! Illum, molestiae harum?"
+      ]
+    ];
+
+    const template = document.createElement('template');
+    template.innerHTML = `
+      <style>
+        .block{
+          border: solid green 1px;
+          padding: 0.5em;
+        }
+        .block-header{
+          border: solid green 1px;
+          background-color: lightgreen;
+          padding: 0.5em;
+        }
+        .block-body{
+          border: solid green 1px;
+          padding: 0.5em;
+        }
+      </style>
+
+      <div class="block-header"></div>
+      <div class="block-body"></div>
+    `;
+
+    class AccBlock extends HTMLElement {
+      constructor() {
+        super();
+        this.attachShadow({ mode: 'open'});
+        this.shadowRoot.appendChild(template.content.cloneNode(true));
+      }
+
+      toggle(){
+        console.log('click');
+        this.show = !this.show;
+        const blockBody = this.shadowRoot.children[2];
+        if(!this.show){
+          blockBody.style.display = 'block';
+        }else{
+          blockBody.style.display = 'none';
+        }
+      }
+
+      connectedCallback(){
+        this.shadowRoot.querySelector('.block-header').addEventListener('click', () => this.toggle());
+      }
+
+      set header(header){
+        this.shadowRoot.querySelector(".block-header").innerHTML = header;
+      }
+
+      set body(body){
+        this.shadowRoot.querySelector(".block-body").innerHTML = body;
+      }
+    }
+
+    customElements.define('acc-block', AccBlock);
+
+    const app = document.getElementById('app');
+
+    arr.forEach((block, idx) => {
+      const accBlock = document.createElement('acc-block');
+      accBlock.header = block[0];
+      accBlock.body = block[1];
+      app.appendChild(accBlock);
+    });
+
+
+  </script>
+</body>
+</html>
